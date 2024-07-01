@@ -17,18 +17,24 @@
 </head>
 
 <body>
-	<header>
-		<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
-		<nav>
-			<ul>
-				<li id="mainPage">projets</li>
-				<li>contact</li>
-				<a href="./login.html">
-					<li id="login">login</li>
-				</a>
-				<img src="./assets/icons/instagram.png" alt="Instagram"></li>
-			</ul>
-		</nav>
+	<header class="header">
+		<div class="edition_mode">
+			<i class="fa-regular fa-pen-to-square"></i>
+			<p>Mode édition</p>
+		</div>
+		<div class="navhead">
+			<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+			<nav>
+				<ul>
+					<li id="mainPage">projets</li>
+					<li>contact</li>
+					<a href="./login.html">
+						<li id="login">login</li>
+					</a>
+					<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+				</ul>
+			</nav>
+		</div>
 	</header>
 	<main>
 		<section id="introduction">
@@ -47,8 +53,12 @@
 			</article>
 		</section>
 		<section id="portfolio">
-			<h2>Mes Projets</h2>
-			<button id="myBtn">Open Modal</button>
+			<div class="container">
+				<div class="title">
+					<h2>Mes projets</h2>
+				</div>
+			</div>
+
 			<div class="gallery_filters">
 				<button id="all" class="selectedButton">Tous</button>
 			</div>
@@ -68,18 +78,6 @@
 				<input type="submit" value="Envoyer">
 			</form>
 		</section>
-		<div id="myModal" class="modal">
-			<div class="test">
-				<div class="modal-content">
-					<span class="close">&times;</span>
-					<h3>Galerie Photo</h3>
-					<div class="modalGallery">
-					</div>
-					<button>Ajouter une photo</button>
-				</div>
-			</div>
-
-		</div>
 	</main>
 
 	<footer>
@@ -92,3 +90,18 @@
 </body>
 
 </html>
+
+
+
+<!-- 
+		const addAPicture = document.getElementById("addAPicture");
+
+			const span = document.getElementsByClassName("close")[0];
+	span.onclick = function () {
+		const mainElement = document.querySelector("main");
+		mainElement.removeChild(mainElement.lastChild);
+	};
+			const returnButton = document.getElementById("return");
+		returnButton.onclick = function () {
+			modal.innerHTML = "";
+		}; -->
