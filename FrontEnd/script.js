@@ -1,6 +1,11 @@
 //Fonction qui supprime une image dans la DB
 function deleteImg(parentclassName) {
 	const apiUrl = "http://localhost:5678/api/works/" + parentclassName;
+	const modalPicture = document.getElementsByClassName(parentclassName);
+	modalPicture[0].parentNode.removeChild(modalPicture[0]);
+	const mainPicture = document.getElementById(parentclassName);
+	mainPicture.parentNode.removeChild(mainPicture);
+
 	const token = localStorage.getItem("token");
 	const fetchOptions = {
 		method: "DELETE",
@@ -29,7 +34,25 @@ function deleteImg(parentclassName) {
 				error
 			);
 		});
-	window.location.reload();
+}
+
+function addImageInModal(event) {
+	imagediv = document.getElementsByClassName("add_img_container")[0];
+	var image = URL.createObjectURL(event.target.files[0]);
+	var newimg = document.createElement("img");
+	imagediv.innerHTML = "";
+	newimg.src = image;
+	newimg.width = "300";
+	imagediv.appendChild(newimg);
+}
+
+function addImageInDb() {
+	const button = document.getElementById("valider");
+
+	button.onclick = function () {
+		const name = document.getElementById("title").value;
+		const categorie = document.getElementById("categorie-select").value;
+	};
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -131,7 +154,6 @@ async function logedInGallery() {
 		const img = document.createElement("img");
 		const fig = document.createElement("div");
 		const trash = document.createElement("i");
-
 		trash.addEventListener("click", function () {
 			deleteImg(item.id);
 		});
@@ -200,6 +222,19 @@ async function modalReturn() {
 	};
 }
 
+async function fetchCategoriesForModal() {
+	const response = await fetch("http://localhost:5678/api/categories");
+	const data = await response.json();
+	const gallery_filters = document.getElementById("categorie-select");
+
+	data.forEach((item) => {
+		const button = document.createElement("option");
+		button.innerHTML = item.name;
+		button.value = item.name;
+		gallery_filters.appendChild(button);
+	});
+}
+
 async function addApictureModalPage() {
 	const modal = document.getElementsByClassName("innerModal")[0];
 	modal.innerHTML = "";
@@ -213,32 +248,26 @@ async function addApictureModalPage() {
 				<h3>Ajout Photo</h3>
 				<div class="add_img_container">
 					<i class="fa-regular fa-image"></i>
-					<button>+ Ajouter photo</button>
+					<input type="file" name="upload_file" class="form-control" placeholder="Enter Name" id="upload_file" onchange="addImageInModal(event)">
 					<span>jpg, png: 4mo max</span>
 				</div>
+
 				<form id="addPictureForm" action="#" method="post">
 					<label for="title">Titre</label>
 					<input type="text" name="title" id="title">
 					<label for="categorie-select">Catégorie</label>
 					<select name="pets" id="categorie-select">
 						<option value=""></option>
-						<option value="dog">Dog</option>
-						<option value="cat">Cat</option>
-						<option value="hamster">Hamster</option>
-						<option value="parrot">Parrot</option>
-						<option value="spider">Spider</option>
-						<option value="goldfish">Goldfish</option>
 					</select>
 				</form>
-		
 				<hr />
-				<button>Valider</button>
+				<button id='valider'>Valider</button>
 			</div>
 		</div>
 		</div>
 		`;
 	modal.insertAdjacentHTML("beforeend", addAPicture);
-
+	fetchCategoriesForModal();
 	const span = document.getElementsByClassName("close")[0];
 	span.onclick = function () {
 		const mainElement = document.querySelector("body");

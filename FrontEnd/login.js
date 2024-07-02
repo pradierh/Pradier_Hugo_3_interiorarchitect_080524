@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (response.ok) {
 				alert("Connexion réussie");
-				console.log(data.token);
 				localStorage.setItem("token", data.token);
 				window.location.href = "./index.html";
 			} else {
