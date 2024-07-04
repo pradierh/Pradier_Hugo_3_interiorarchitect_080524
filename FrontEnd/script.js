@@ -1,4 +1,3 @@
-//Fonction qui supprime une image dans la DB
 function deleteImg(parentclassName) {
 	const apiUrl = "http://localhost:5678/api/works/" + parentclassName;
 	const modalPicture = document.getElementsByClassName(parentclassName);
@@ -37,21 +36,91 @@ function deleteImg(parentclassName) {
 }
 
 function addImageInModal(event) {
-	imagediv = document.getElementsByClassName("add_img_container")[0];
-	var image = URL.createObjectURL(event.target.files[0]);
+	if (
+		event.target.files[0].type != "image/jpg" &&
+		event.target.files[0].type != "image/jpeg" &&
+		event.target.files[0].type != "image/png"
+	) {
+		errorMessage(
+			"Le fichier que vous essayez d'Upload n'est pas dans un bon format"
+		);
+		return;
+	}
+	if (event.target.files[0].size > 4000000) {
+		errorMessage("Le fichier est trop volumineux");
+		return;
+	}
+
+	const imagediv = document.getElementsByClassName("add_img_container")[0];
+	var file = URL.createObjectURL(event.target.files[0]);
 	var newimg = document.createElement("img");
 	imagediv.innerHTML = "";
-	newimg.src = image;
-	newimg.width = "300";
+	newimg.src = file;
+	newimg.id = "imagePreview";
 	imagediv.appendChild(newimg);
+	addImageInDb(event.target.files[0]);
 }
 
-function addImageInDb() {
+function errorMessage(text) {
+	if (document.getElementsByClassName("errorAddImage")[0]) {
+		var newText = document.getElementsByClassName("errorAddImage")[0];
+		newText.textContent = "! " + text + " !";
+		return;
+	}
+	var addPictureForm = document.getElementById("addPictureForm");
+	var newParagraph = document.createElement("p");
+	newParagraph.textContent = "! " + text + " !";
+	newParagraph.classList = "errorAddImage";
+	addPictureForm.insertAdjacentElement("afterend", newParagraph);
+}
+
+function addImageInDb(file) {
+	const apiUrl = "http://localhost:5678/api/works";
+	const token = localStorage.getItem("token");
 	const button = document.getElementById("valider");
 
 	button.onclick = function () {
 		const name = document.getElementById("title").value;
-		const categorie = document.getElementById("categorie-select").value;
+		if (name.length > 10) {
+			errorMessage("Le titre est trop long");
+			return;
+		}
+		const categoryValue = document.getElementById("categorie-select").value;
+		if (categoryValue != 1 && categoryValue != 2 && categoryValue != 3) {
+			errorMessage("Veuillez introduire une catégorie correcte");
+			return;
+		}
+		const formData = new FormData();
+		formData.append("image", file);
+		formData.append("title", name);
+		formData.append("category", categoryValue);
+
+		const fetchOptions = {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			body: formData,
+		};
+
+		fetch(apiUrl, fetchOptions)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(
+						"Network response was not ok " + response.statusText
+					);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Data fetched successfully:", data);
+			})
+			.catch((error) => {
+				console.error(
+					"There was a problem with the fetch operation:",
+					error
+				);
+			});
 	};
 }
 
@@ -199,8 +268,7 @@ async function modalReturn() {
 	modal.innerHTML = "";
 	const modalBuilder = `
 					<div class="close_return">
-						<i id="return" class="fa-solid fa-arrow-left"></i>
-						<span class="close">&times;</span>
+						<i class="fa-solid fa-xmark close"></i>
 					</div>
 					<div class="modal-content">
 						<h3>Galerie photo</h3>
@@ -230,7 +298,7 @@ async function fetchCategoriesForModal() {
 	data.forEach((item) => {
 		const button = document.createElement("option");
 		button.innerHTML = item.name;
-		button.value = item.name;
+		button.value = item.id;
 		gallery_filters.appendChild(button);
 	});
 }
@@ -242,13 +310,14 @@ async function addApictureModalPage() {
 		<div class="modal-content-add-picture">
 			<div class="close_return">
 				<i id="return" class="fa-solid fa-arrow-left"></i>
-				<span class="close">&times;</span>
+				<i class="fa-solid fa-xmark close"></i>
 			</div>
 			<div class="modal-content-add-picture-body">
 				<h3>Ajout Photo</h3>
 				<div class="add_img_container">
 					<i class="fa-regular fa-image"></i>
 					<input type="file" name="upload_file" class="form-control" placeholder="Enter Name" id="upload_file" onchange="addImageInModal(event)">
+					<label id="ajouterPhoto" for="upload_file">+ Ajouter photo</label>
 					<span>jpg, png: 4mo max</span>
 				</div>
 
@@ -268,6 +337,8 @@ async function addApictureModalPage() {
 		`;
 	modal.insertAdjacentHTML("beforeend", addAPicture);
 	fetchCategoriesForModal();
+	const leftArrow = document.getElementsByClassName("close_return")[0];
+	leftArrow.style.justifyContent = "space-between";
 	const span = document.getElementsByClassName("close")[0];
 	span.onclick = function () {
 		const mainElement = document.querySelector("body");
@@ -288,8 +359,7 @@ async function modalSetup() {
 			<div id="myModal" class="modal">
 				<div class="innerModal">
 					<div class="close_return">
-						<i id="return" class="fa-solid fa-arrow-left"></i>
-						<span class="close">&times;</span>
+						<i class="fa-solid fa-xmark close"></i>
 					</div>
 					<div class="modal-content">
 						<h3>Galerie photo</h3>

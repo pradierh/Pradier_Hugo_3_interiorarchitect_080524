@@ -372,6 +372,13 @@ li:hover {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
+.success p {
+	color: green;
+	margin-top: 20px;
+	border: 1px solid green;
+	padding: 10px;
+}
+
 input[type="submit"] {
 	font-family: "Syne";
 	font-weight: 700;
@@ -410,6 +417,20 @@ footer nav ul {
 	justify-content: flex-end;
 }
 
+.errorLogin p {
+	margin-top: 20px;
+	color: red;
+	border: 1px solid red;
+	padding: 10px;
+}
+
+.errorAddImage {
+	margin-top: 20px;
+	color: red;
+	border: 1px solid red;
+	padding: 10px;
+	margin-bottom: -50px;
+}
 .log {
 	display: flex;
 	justify-content: center;
@@ -438,6 +459,18 @@ footer nav ul {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
+#ajouterPhoto {
+	margin-top: 7px;
+	margin-bottom: 8px;
+	padding: 11px 29px;
+	font-weight: bold;
+	color: #306685;
+	background-color: #cbd6dc;
+	border-radius: 25px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
 #loginForm label {
 	margin-top: 50px;
 }
@@ -445,6 +478,10 @@ footer nav ul {
 #loginForm input[type="text" i] {
 	padding-block: 1px;
 	padding-inline: 2px;
+}
+
+#upload_file {
+	display: none;
 }
 
 #loginForm button {
@@ -502,6 +539,8 @@ form button {
 }
 
 .modal-content button {
+	margin-top: 38px;
+	margin-bottom: 45px;
 	height: 37px;
 	padding: 23px;
 	display: flex;
@@ -525,7 +564,7 @@ form button {
 .modal-content h3 {
 	font-size: 26px;
 	margin-bottom: 46px;
-	margin-top: 60px;
+	margin-top: 10px;
 }
 
 .modal-content i {
@@ -565,10 +604,16 @@ form button {
 	margin-right: 9px;
 }
 
+.modalGallery > *:nth-last-child(-n + 5) {
+	margin-bottom: 0;
+}
+
 hr {
 	border: 0.1px solid #b3b3b3;
 	border-radius: 5px;
 	width: 428px;
+	margin-block-start: 67px;
+	margin-block-end: 0px;
 }
 .modalGallery img {
 	width: 78.26px;
@@ -577,14 +622,20 @@ hr {
 }
 
 .close_return {
-	width: 98%;
+	margin-top: 26px;
+	width: 90%;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 }
 
+#return {
+	color: black;
+	font-size: 24px;
+	font-weight: bold;
+}
 .close {
-	color: #aaa;
-	font-size: 28px;
+	color: black;
+	font-size: 24px;
 	font-weight: bold;
 }
 
@@ -623,10 +674,12 @@ hr {
 }
 
 .modal-content-add-picture h3 {
+	margin-top: 10px;
 	font-size: 26px;
 	margin-bottom: 36px;
 }
 .add_img_container {
+	margin-bottom: 30px;
 	width: 100%;
 	height: 169px;
 	display: flex;
@@ -644,7 +697,7 @@ hr {
 .add_img_container .fa-regular,
 .far {
 	font-weight: 400;
-	font-size: 76px;
+	font-size: 60px;
 	color: #cbd6dc;
 }
 
@@ -661,6 +714,8 @@ hr {
 	font-size: 14px;
 	width: 173px;
 	height: 36px;
+	margin-top: 38px;
+	margin-bottom: 45px;
 }
 
 #addPictureForm {
@@ -669,7 +724,11 @@ hr {
 	width: 100%;
 }
 
-.modal-content-add-picture input {
+#title {
+	margin-bottom: 21px;
+}
+
+#addPictureForm input {
 	margin-top: 7px;
 	height: 50px;
 	width: 100%;
@@ -685,4 +744,9 @@ hr {
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+.add_img_container img {
+	height: 100%;
+	width: auto;
 }

@@ -3,10 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault(); // Empêche la soumission par défaut du formulaire
-
 		const email = document.getElementById("email").value;
 		const password = document.getElementById("psw").value;
-		console.log(JSON.stringify({ email, password }));
 
 		try {
 			const response = await fetch(
@@ -24,11 +22,29 @@ document.addEventListener("DOMContentLoaded", () => {
 			console.log(response);
 
 			if (response.ok) {
-				alert("Connexion réussie");
-				localStorage.setItem("token", data.token);
-				window.location.href = "./index.html";
+				var success = document.getElementsByClassName("log")[0];
+				success.innerHTML = `<div class='success'><p><i class="fa-regular fa-square-check"></i> Connection Réussie !</p></div>`;
+				setTimeout(function () {
+					localStorage.setItem("token", data.token);
+					window.location.href = "./index.html";
+				}, 2000);
 			} else {
-				alert(data.message);
+				var failed = document.getElementById("loginForm");
+				failed.innerHTML = `        <form id="loginForm" method="post">
+            <div class="logContainer">
+                <label for="email"><b>E-mail</b></label>
+                <input type="text" id="email" name="email" required>
+                <label for="psw"><b>Mot de passe</b></label>
+                <input type="password" id="psw" name="psw" required>
+                <button type="submit">Se connecter</button>
+            </div>
+            <span class="psw"><a href="#">Mot de passe oublié</a></span>
+        </form>
+						<div class="errorLogin">
+									<p> <i class="fa-solid fa-circle-info"></i> Mot de passe ou identifiant incorrect</p> 
+			</div>
+
+		`;
 			}
 		} catch (error) {
 			console.error("Erreur:", error);
