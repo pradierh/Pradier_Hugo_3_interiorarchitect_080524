@@ -77,9 +77,10 @@ function errorMessage(text) {
 function addImageInDb(file) {
 	const apiUrl = "http://localhost:5678/api/works";
 	const token = localStorage.getItem("token");
-	const button = document.getElementById("valider");
+	const form = document.getElementById("addPictureForm");
 
-	button.onclick = function () {
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
 		const name = document.getElementById("title").value;
 		if (name.length > 10) {
 			errorMessage("Le titre est trop long");
@@ -98,30 +99,13 @@ function addImageInDb(file) {
 		const fetchOptions = {
 			method: "POST",
 			headers: {
+				Accept: "application/json",
 				Authorization: `Bearer ${token}`,
 			},
 			body: formData,
 		};
-
-		fetch(apiUrl, fetchOptions)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(
-						"Network response was not ok " + response.statusText
-					);
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log("Data fetched successfully:", data);
-			})
-			.catch((error) => {
-				console.error(
-					"There was a problem with the fetch operation:",
-					error
-				);
-			});
-	};
+		fetch(apiUrl, fetchOptions);
+	});
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -260,7 +244,6 @@ async function logegInUserPageSetup() {
 	gallery_filters_hide.style.display = "none";
 	pageTitle.style.marginBottom = "92px";
 	pageTitle.insertAdjacentHTML("beforeend", modalOpenerHTML);
-	navhead.style.marginTop = "0px";
 }
 
 async function modalReturn() {
@@ -328,9 +311,9 @@ async function addApictureModalPage() {
 					<select name="pets" id="categorie-select">
 						<option value=""></option>
 					</select>
+					<button type="submit" id='valider'>Valider</button>
 				</form>
 				<hr />
-				<button id='valider'>Valider</button>
 			</div>
 		</div>
 		</div>

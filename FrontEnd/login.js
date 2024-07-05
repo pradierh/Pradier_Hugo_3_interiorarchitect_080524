@@ -19,8 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			);
 
 			const data = await response.json();
-			console.log(response);
-
 			if (response.ok) {
 				var success = document.getElementsByClassName("log")[0];
 				success.innerHTML = `<div class='success'><p><i class="fa-regular fa-square-check"></i> Connection Réussie !</p></div>`;
