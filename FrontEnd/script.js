@@ -248,12 +248,16 @@ function addImageInDb(file) {
 	const token = localStorage.getItem("token");
 	const form = document.getElementById("addPictureForm");
 
+	// Remove any existing event listener to avoid duplicates
 	form.removeEventListener("submit", handleSubmit);
+
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
+
 		if (addImageInDbErrorHandler() == null) {
 			return;
 		}
+
 		const name = document.getElementById("title").value;
 		const categoryValue = document.getElementById("categorie-select").value;
 		const formData = new FormData();
@@ -269,7 +273,23 @@ function addImageInDb(file) {
 			},
 			body: formData,
 		};
-		fetch(apiUrl, fetchOptions);
+
+		try {
+			const response = await fetch(apiUrl, fetchOptions);
+			if (!response.ok) {
+				throw new Error(
+					"Network response was not ok " + response.statusText
+				);
+			}
+			const data = await response.json();
+			console.log("Data fetched successfully:", data);
+		} catch (error) {
+			console.error(
+				"There was a problem with the fetch operation:",
+				error
+			);
+		}
+
 		const mainElement = document.querySelector("body");
 		const gallery = document.getElementsByClassName("gallery")[0];
 		gallery.innerHTML = ``;
