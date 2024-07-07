@@ -35,6 +35,32 @@ function deleteImg(parentclassName) {
 		});
 }
 
+// Fonction qui permet de chercher les images dans la DB et les mettre dans l'HTML
+async function fetchImages() {
+	try {
+		const response = await fetch("http://localhost:5678/api/works");
+		const data = await response.json();
+		const gallery = document.querySelector(".gallery");
+
+		data.forEach((item) => {
+			const img = document.createElement("img");
+			const fig = document.createElement("figure");
+			const imgCaption = document.createElement("figcaption");
+
+			img.src = item.imageUrl;
+			img.alt = item.title;
+			imgCaption.textContent = item.title;
+			fig.setAttribute("id", item.id);
+			fig.classList.add("e" + item.categoryId);
+			fig.appendChild(img);
+			fig.appendChild(imgCaption);
+			gallery.appendChild(fig);
+		});
+	} catch (error) {
+		console.error("Error fetching images:", error);
+	}
+}
+
 function addImageInModalErrorHandler(event) {
 	if (
 		event.target.files[0].type != "image/jpg" &&
@@ -284,31 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			});
 		});
-	}
-	// Fonction qui permet de chercher les images dans la DB et les mettre dans l'HTML
-	async function fetchImages() {
-		try {
-			const response = await fetch("http://localhost:5678/api/works");
-			const data = await response.json();
-			const gallery = document.querySelector(".gallery");
-
-			data.forEach((item) => {
-				const img = document.createElement("img");
-				const fig = document.createElement("figure");
-				const imgCaption = document.createElement("figcaption");
-
-				img.src = item.imageUrl;
-				img.alt = item.title;
-				imgCaption.textContent = item.title;
-				fig.setAttribute("id", item.id);
-				fig.classList.add("e" + item.categoryId);
-				fig.appendChild(img);
-				fig.appendChild(imgCaption);
-				gallery.appendChild(fig);
-			});
-		} catch (error) {
-			console.error("Error fetching images:", error);
-		}
 	}
 
 	// Fonction qui permet d'aller chercher les noms des catégories dans la DB
