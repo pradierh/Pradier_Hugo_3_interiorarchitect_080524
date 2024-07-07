@@ -424,6 +424,7 @@ footer nav ul {
 	border: 1px solid red;
 	padding: 10px;
 	margin-bottom: -50px;
+	text-align: center;
 }
 .log {
 	display: flex;
@@ -517,6 +518,8 @@ form button {
 	background-color: rgba(0, 0, 0, 0.4);
 	justify-content: center;
 	align-items: center;
+	font-family: "Work Sans";
+    font-size: 14px;
 }
 
 .innerModal {
@@ -708,6 +711,8 @@ hr {
 	font-size: 14px;
 	width: 173px;
 	height: 36px;
+	margin-left: auto;
+	margin-right: auto;
 	margin-top: 38px;
 	margin-bottom: 45px;
 }
@@ -716,6 +721,10 @@ hr {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+}
+#addPictureForm input[type="text" i] {
+    padding-block: 0px;
+    padding-inline: 0px;
 }
 
 #title {

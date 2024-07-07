@@ -35,7 +35,7 @@ function deleteImg(parentclassName) {
 		});
 }
 
-function addImageInModal(event) {
+function addImageInModalErrorHandler(event) {
 	if (
 		event.target.files[0].type != "image/jpg" &&
 		event.target.files[0].type != "image/jpeg" &&
@@ -44,13 +44,28 @@ function addImageInModal(event) {
 		errorMessage(
 			"Le fichier que vous essayez d'Upload n'est pas dans un bon format"
 		);
-		return;
+
+		borderError("addImageContainerId");
+
+		return null;
 	}
 	if (event.target.files[0].size > 4000000) {
 		errorMessage("Le fichier est trop volumineux");
-		return;
+		borderError("addImageContainerId");
+		return null;
 	}
+	borderErrorElse("addImageContainerId");
+	if (document.getElementsByClassName("errorAddImage")[0]) {
+		var rm = document.getElementsByClassName("errorAddImage")[0];
+		rm.remove();
+	}
+	return "success";
+}
 
+function addImageInModal(event) {
+	if (addImageInModalErrorHandler(event) == null) {
+		return null;
+	}
 	const imagediv = document.getElementsByClassName("add_img_container")[0];
 	var file = URL.createObjectURL(event.target.files[0]);
 	var newimg = document.createElement("img");
@@ -67,11 +82,139 @@ function errorMessage(text) {
 		newText.textContent = "! " + text + " !";
 		return;
 	}
+	var position = document.getElementById("categorie-select");
 	var addPictureForm = document.getElementById("addPictureForm");
 	var newParagraph = document.createElement("p");
 	newParagraph.textContent = "! " + text + " !";
 	newParagraph.classList = "errorAddImage";
-	addPictureForm.insertAdjacentElement("afterend", newParagraph);
+	position.insertAdjacentElement("afterend", newParagraph);
+}
+
+const handleSubmit = async (e) => {
+	e.preventDefault();
+	addImageInDbErrorHandlerFirst();
+};
+
+async function addApictureModalPage() {
+	const modal = document.getElementsByClassName("innerModal")[0];
+	modal.innerHTML = "";
+	const addAPicture = `
+		<div class="modal-content-add-picture">
+			<div class="close_return">
+				<i id="return" class="fa-solid fa-arrow-left"></i>
+				<i class="fa-solid fa-xmark close"></i>
+			</div>
+			<div class="modal-content-add-picture-body">
+				<h3>Ajout Photo</h3>
+				<div id="addImageContainerId" class="add_img_container">
+					<i class="fa-regular fa-image"></i>
+					<input type="file" name="upload_file" class="form-control" placeholder="Enter Name" id="upload_file">
+					<label id="ajouterPhoto" for="upload_file">+ Ajouter photo</label>
+					<span>jpg, png: 4mo max</span>
+				</div>
+
+				<form id="addPictureForm" action="#" method="post">
+					<label for="title">Titre</label>
+					<input type="text" name="title" id="title">
+					<label for="categorie-select">Catégorie</label>
+					<select name="categories" id="categorie-select">
+						<option value=""></option>
+					</select>
+					<hr />
+					<button type="submit" id='valider'>Valider</button>
+				</form>
+			</div>
+		</div>
+		</div>
+		`;
+	modal.insertAdjacentHTML("beforeend", addAPicture);
+	fetchCategoriesForModal();
+	const form = document.getElementById("addPictureForm");
+	form.addEventListener("submit", handleSubmit);
+	document
+		.getElementById("upload_file")
+		.addEventListener("change", addImageInModal);
+
+	const leftArrow = document.getElementsByClassName("close_return")[0];
+	leftArrow.style.justifyContent = "space-between";
+	const span = document.getElementsByClassName("close")[0];
+	span.onclick = function () {
+		const mainElement = document.querySelector("body");
+		mainElement.removeChild(mainElement.lastChild);
+	};
+	const returnButton = document.getElementById("return");
+	returnButton.onclick = function () {
+		modalReturn();
+	};
+}
+
+function borderError(idError) {
+	const name = document.getElementById(idError);
+	name.style.border = "1px solid red";
+}
+
+function borderErrorElse(idError) {
+	const name = document.getElementById(idError);
+	name.style.border = "none";
+}
+
+function addImageInDbErrorHandlerFirst(file) {
+	const name = document.getElementById("title");
+	const categoryValue = document.getElementById("categorie-select");
+
+	if (
+		categoryValue.value != 1 &&
+		categoryValue.value != 2 &&
+		categoryValue.value != 3
+	) {
+		errorMessage("Veuillez introduire une catégorie correcte");
+		borderError("categorie-select");
+	} else borderErrorElse("categorie-select");
+
+	if (name.value.length > 10) {
+		errorMessage("Le titre est trop long");
+		borderError("title");
+	} else borderErrorElse("title");
+	if (name.value.length < 1) {
+		errorMessage("Veuillez insérer un titre");
+		borderError("title");
+	} else borderErrorElse("title");
+
+	if (file === undefined || file === null) {
+		errorMessage("Veuillez insérer une image");
+		borderError("addImageContainerId");
+	} else borderErrorElse("addImageContainerId");
+}
+
+function addImageInDbErrorHandler() {
+	const name = document.getElementById("title");
+	const categoryValue = document.getElementById("categorie-select");
+	var errorNumber = 0;
+
+	if (
+		categoryValue.value != 1 &&
+		categoryValue.value != 2 &&
+		categoryValue.value != 3
+	) {
+		errorMessage("Veuillez introduire une catégorie correcte");
+		borderError("categorie-select");
+		errorNumber++;
+	} else borderErrorElse("categorie-select");
+
+	if (name.value.length > 10) {
+		errorMessage("Le titre est trop long");
+		borderError("title");
+		errorNumber++;
+	} else borderErrorElse("title");
+	if (name.value.length < 1) {
+		errorMessage("Veuillez insérer un titre");
+		borderError("title");
+		errorNumber++;
+	} else borderErrorElse("title");
+
+	if (errorNumber != 0) return null;
+
+	return "success";
 }
 
 function addImageInDb(file) {
@@ -79,18 +222,14 @@ function addImageInDb(file) {
 	const token = localStorage.getItem("token");
 	const form = document.getElementById("addPictureForm");
 
+	form.removeEventListener("submit", handleSubmit);
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
+		if (addImageInDbErrorHandler() == null) {
+			return;
+		}
 		const name = document.getElementById("title").value;
-		if (name.length > 10) {
-			errorMessage("Le titre est trop long");
-			return;
-		}
 		const categoryValue = document.getElementById("categorie-select").value;
-		if (categoryValue != 1 && categoryValue != 2 && categoryValue != 3) {
-			errorMessage("Veuillez introduire une catégorie correcte");
-			return;
-		}
 		const formData = new FormData();
 		formData.append("image", file);
 		formData.append("title", name);
@@ -105,6 +244,11 @@ function addImageInDb(file) {
 			body: formData,
 		};
 		fetch(apiUrl, fetchOptions);
+		const mainElement = document.querySelector("body");
+		const gallery = document.getElementsByClassName("gallery")[0];
+		gallery.innerHTML = ``;
+		mainElement.removeChild(mainElement.lastChild);
+		fetchImages();
 	});
 }
 
@@ -227,7 +371,6 @@ async function logegInUserPageSetup() {
 	const gallery_filters_hide =
 		document.getElementsByClassName("gallery_filters")[0];
 	const pageTitle = document.getElementsByClassName("container")[0];
-	const navhead = document.getElementsByClassName("navhead")[0];
 	const modalOpenerHTML = `
             <div class="modal_opener">
                 <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
@@ -284,53 +427,6 @@ async function fetchCategoriesForModal() {
 		button.value = item.id;
 		gallery_filters.appendChild(button);
 	});
-}
-
-async function addApictureModalPage() {
-	const modal = document.getElementsByClassName("innerModal")[0];
-	modal.innerHTML = "";
-	const addAPicture = `
-		<div class="modal-content-add-picture">
-			<div class="close_return">
-				<i id="return" class="fa-solid fa-arrow-left"></i>
-				<i class="fa-solid fa-xmark close"></i>
-			</div>
-			<div class="modal-content-add-picture-body">
-				<h3>Ajout Photo</h3>
-				<div class="add_img_container">
-					<i class="fa-regular fa-image"></i>
-					<input type="file" name="upload_file" class="form-control" placeholder="Enter Name" id="upload_file" onchange="addImageInModal(event)">
-					<label id="ajouterPhoto" for="upload_file">+ Ajouter photo</label>
-					<span>jpg, png: 4mo max</span>
-				</div>
-
-				<form id="addPictureForm" action="#" method="post">
-					<label for="title">Titre</label>
-					<input type="text" name="title" id="title">
-					<label for="categorie-select">Catégorie</label>
-					<select name="pets" id="categorie-select">
-						<option value=""></option>
-					</select>
-					<button type="submit" id='valider'>Valider</button>
-				</form>
-				<hr />
-			</div>
-		</div>
-		</div>
-		`;
-	modal.insertAdjacentHTML("beforeend", addAPicture);
-	fetchCategoriesForModal();
-	const leftArrow = document.getElementsByClassName("close_return")[0];
-	leftArrow.style.justifyContent = "space-between";
-	const span = document.getElementsByClassName("close")[0];
-	span.onclick = function () {
-		const mainElement = document.querySelector("body");
-		mainElement.removeChild(mainElement.lastChild);
-	};
-	const returnButton = document.getElementById("return");
-	returnButton.onclick = function () {
-		modalReturn();
-	};
 }
 
 async function modalSetup() {
